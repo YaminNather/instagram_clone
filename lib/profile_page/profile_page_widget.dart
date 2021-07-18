@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_ui_clone/logged_in_widgets/change_account_widget.dart';
 
@@ -68,7 +65,7 @@ class _WProfilePageState extends State<WProfilePage> {
 
   Row _buildStats() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
         Column(
           mainAxisSize: MainAxisSize.min,
