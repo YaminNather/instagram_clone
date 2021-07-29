@@ -30,5 +30,6 @@ analyzer:
     unnecessary_new : ignore
     unnecessary_const: ignore
     curly_braces_in_flow_control_structures: ignore
+    avoid_print: ignore
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

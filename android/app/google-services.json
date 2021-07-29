@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "903256378201",
+    "project_id": "iit-guwahati-course",
+    "storage_bucket": "iit-guwahati-course.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903256378201:android:add9275b2de05a7ff71a48",
+        "android_client_info": {
+          "package_name": "com.example.instagram_ui_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903256378201-94d99ukdh0k4s2rilejkg399r2o23am1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDygWn8YiJ3-CKQFnUeR30i945-dNO98OU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903256378201-94d99ukdh0k4s2rilejkg399r2o23am1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

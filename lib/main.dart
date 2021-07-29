@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:instagram_ui_clone/app_widget.dart';
+import 'injector.dart';
+import 'presentation/app_widget.dart';
 
 void main() {
+  configureDependencies();
+
   runApp(const WApp());
 }
