@@ -10,7 +10,10 @@ import 'profile_dto.dart';
 @singleton
 class ProfileService {
   bool isValidUsername(final String username) {
-    return true;
+    if(username.length < 6 || username.length > 20)
+      return false;
+
+    return !username.contains("^[A-Za-z0-9_]");
   }
 
   Future<void> createProfile(final String userId, final String username) async {

@@ -187,7 +187,7 @@ class _WForm extends StatelessWidget {
 
     return _buildTextFormField(
       label: "Password", validator: validatorCallback, onChanged: onChangedCallback,
-      initialValue: state.password
+      initialValue: state.password, obscureText: true
     );
   }
 
@@ -213,13 +213,13 @@ class _WForm extends StatelessWidget {
 
   Widget _buildTextFormField({
     required String label, String? Function(String?)? validator, void Function(String)? onChanged,
-    String? initialValue
+    String? initialValue, bool obscureText = false
   }) {
     final InputDecoration inputDecoration = new InputDecoration(labelText: label);
     
     return new TextFormField(
       decoration: inputDecoration, validator: validator, autovalidateMode: AutovalidateMode.onUserInteraction,
-      onChanged: onChanged, initialValue: initialValue
+      onChanged: onChanged, initialValue: initialValue, obscureText: obscureText
     );
   }
   

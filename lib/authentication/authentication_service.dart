@@ -8,11 +8,31 @@ class AuthenticationService {
   const AuthenticationService(this._profileService);
 
   bool isValidEmail(final String email) {
-    return email.contains("@");
+    final RegExp specialCharactersRegex = new RegExp(r"[^A-Za-z0-9]");
+
+    if(email.contains(new RegExp(r"[^A-Za-z0-9_@\.]")))
+      return false;
+
+    if(!email.contains("@"))
+      return false;
+
+    final List<String> splitEmail = email.split("@");
+    if(splitEmail.length != 2)
+      return false;
+    
+    final String prefix = email[0];
+    if(prefix.startsWith(specialCharactersRegex) || prefix[prefix.length - 1].contains(specialCharactersRegex))
+      return false;            
+
+    final String domain = email[1];
+    if(domain.startsWith(specialCharactersRegex) || domain[prefix.length - 1].contains(specialCharactersRegex))
+      return false;
+
+    return !domain.contains(new RegExp(r"\."));
   }
 
   bool isValidPassword(final String password) {
-    return true;
+    return password.length >= 6 && password.length <= 15;
   }
 
   bool isValidUsername(final String username) {

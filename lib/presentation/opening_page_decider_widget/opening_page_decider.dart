@@ -24,5 +24,6 @@ class WOpeningPageDecider extends StatelessWidget {
     );
   }
 
+
   final AuthenticationService _authenticationService = getIt();
 }
