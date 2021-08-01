@@ -1,9 +1,10 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_ui_clone/post/post.dart';
+import 'package:instagram_ui_clone/presentation/home_page/posts_section/post/video_player/video_player_widget.dart';
 import 'package:video_player/video_player.dart';
-import '../../../post/post_dto.dart';
-import '../../widgets/icon_toggle_button_widget.dart';
+import '../../../../post/post_dto.dart';
+import '../../../widgets/icon_toggle_button_widget.dart';
 
 
 
@@ -38,8 +39,6 @@ class _WPostState extends State<WPost> {
 
   @override
   Widget build(BuildContext context) {
-    final PostDTO post = widget.post;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -64,7 +63,11 @@ class _WPostState extends State<WPost> {
 
               const SizedBox(height: 4.0),
 
-              _buildReply()
+              _buildReply(),
+
+              const SizedBox(height: 4.0),
+
+              _buildTimeSincePost()
             ]
           )
         )
@@ -82,37 +85,6 @@ class _WPostState extends State<WPost> {
         ]
       )
     );
-  }
-
-  Widget _buildMedia() {
-    final Widget media;
-    if(widget.post.mediaType == const ImageMediaType())    
-      media = Image.network(widget.post.imageURI, fit: BoxFit.cover);
-    else {
-      media = _buildVideoPlayer();
-    }
-
-    return SizedBox(height: 300.0, child: media);
-  }
-
-  Widget _buildVideoPlayer() {
-    final VideoPlayerController controller = _videoPlayerController!;
-    
-    final Widget videoPlayer;
-    if(!controller.value.isInitialized)
-      videoPlayer = new Container();
-    else
-      videoPlayer = VideoPlayer(controller);
-
-
-    void onTapCallback() async {
-      if(controller.value.isPlaying == false)
-        await controller.play();
-      else
-        await controller.pause();
-    }
-
-    return GestureDetector(onTap: onTapCallback, child: videoPlayer);
   }
 
   Widget _buildUpperSection() {
@@ -136,6 +108,17 @@ class _WPostState extends State<WPost> {
         ]
       )
     );
+  }
+
+  Widget _buildMedia() {
+    final Widget media;
+    if(widget.post.mediaType == const ImageMediaType())    
+      media = Image.network(widget.post.imageURI, fit: BoxFit.cover);
+    else {
+      media = WVideoPlayer(url: widget.post.imageURI);
+    }
+
+    return SizedBox(height: 300.0, child: media);
   }
 
   Widget _buildActionButtons() {
@@ -177,6 +160,13 @@ class _WPostState extends State<WPost> {
 
   Widget _buildReply() => const Text("ReplyingUser The reply");
 
+  Widget _buildTimeSincePost() {
+    return Text(
+      timeSincePostAsString(widget.post.dateTime), 
+      style: const TextStyle(color: Colors.grey)
+    );
+  }
+
   @override
   void dispose() {
     final VideoPlayerController? videoPlayerController = _videoPlayerController;
@@ -188,4 +178,22 @@ class _WPostState extends State<WPost> {
 
   
   VideoPlayerController? _videoPlayerController;
+}
+
+
+String timeSincePostAsString(final DateTime postedTime) {
+  final DateTime now = DateTime.now();
+
+  final Duration timeSincePost = now.difference(postedTime);
+
+  if(timeSincePost < const Duration(hours: 1))
+    return "${timeSincePost.inMinutes} mins ago";
+
+  if(timeSincePost < const Duration(days: 1))
+    return "${timeSincePost.inHours} hours ago";
+
+  if(timeSincePost < const Duration(days: 30))
+    return "${timeSincePost.inDays} days ago";
+
+  return "${timeSincePost.inDays ~/ 30} months ago";
 }

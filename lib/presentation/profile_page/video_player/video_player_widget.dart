@@ -29,8 +29,8 @@ class _WVideoPlayerState extends State<WVideoPlayer> {
   @override
   Widget build(BuildContext context) {
     if(!_controller.value.isInitialized)
-      return Container();
-    
+      return Container();    
+
     return VideoPlayer(_controller);
   }  
 
