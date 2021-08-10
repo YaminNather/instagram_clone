@@ -2,7 +2,7 @@ import "package:flutter/material.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import '../../injector.dart';
-import '../global_provider.dart';
+import '../widgets/instagram_logo_widget.dart';
 import '../utils/widget_utils.dart';
 import 'bloc/sign_up_page_bloc.dart';
 
@@ -47,7 +47,7 @@ class _WSignUpPageState extends State<WSignUpPage> {
                     
                     _WForm(),
     
-                    const SizedBox(height: 16.0),          
+                    const SizedBox(height: 16.0),
     
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -64,7 +64,7 @@ class _WSignUpPageState extends State<WSignUpPage> {
                       ]
                     ),
     
-                    const SizedBox(height: 16.0),
+                    const SizedBox(height: 4.0),
                     
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -76,22 +76,6 @@ class _WSignUpPageState extends State<WSignUpPage> {
                           onPressed: () => Navigator.popAndPushNamed(context, "Sign In Page")
                         )
                       ]
-                    ),
-    
-                    const SizedBox(height: 20.0),
-    
-                    const Spacer(),
-    
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: const <Widget>[
-                        const Divider(),              
-    
-                        Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.0),
-                          child: const Text("Instagram OT Facebook"),
-                        )
-                      ],
                     )
                   ]
                 )
@@ -104,11 +88,9 @@ class _WSignUpPageState extends State<WSignUpPage> {
   }
 
   Widget _buildLogo(final BuildContext context) {
-    final String url = GlobalProvider.of(context).logoURLBig;
-    
-    return Padding( 
+    return const Padding(
       padding: const EdgeInsets.symmetric(horizontal: 64.0), 
-      child: Image.network(url, fit: BoxFit.contain) 
+      child: WInstagramLogo()
     );
   }
 }

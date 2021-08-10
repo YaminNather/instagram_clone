@@ -1,11 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:instagram_ui_clone/post/post.dart';
 
+import 'likes.dart';
+
 class PostDTO extends Equatable {
-  const PostDTO(this.postId, this.userData, this.mediaType, this.imageURI, this.caption, this.dateTime);
+  const PostDTO(
+    this.postId, this.userData, this.mediaType, this.imageURI, this.caption, this.dateTime, this.likes
+  );
 
   @override  
-  List<Object?> get props => [postId, userData, mediaType, imageURI, caption, dateTime];
+  List<Object?> get props => [postId, userData, mediaType, imageURI, caption, dateTime, likes];
 
 
 
@@ -15,6 +19,7 @@ class PostDTO extends Equatable {
   final String imageURI;
   final String caption;
   final DateTime dateTime;
+  final Likes likes;
 }
 
 class UserData extends Equatable {

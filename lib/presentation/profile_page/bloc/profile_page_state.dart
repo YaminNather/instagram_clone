@@ -12,14 +12,22 @@ class LoadingState extends ProfilePageState {
 }
 
 class LoadedState extends ProfilePageState {
-  const LoadedState(this.username, this.bio, this.dpURL, this.posts);
+  const LoadedState(this.profile, this.followingCount, this.followersCount, this.posts);
+
+  LoadedState copyWith({ProfileDTO? profile, int? followingCount, int? followersCount}) {
+    return new LoadedState(
+      profile ?? this.profile, followingCount ?? this.followingCount, followersCount ?? this.followersCount, 
+      posts
+    );
+  }
 
   @override
-  List<Object> get props => [username, bio, dpURL, posts];
+  List<Object> get props => <Object>[profile, followingCount, followersCount, posts];
 
 
-  final String username;
-  final String bio;
-  final String dpURL;
+
+  final ProfileDTO profile;
+  final int followingCount;
+  final int followersCount;
   final ProfilePagePosts posts;
 }

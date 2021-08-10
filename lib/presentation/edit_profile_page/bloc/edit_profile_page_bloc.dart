@@ -9,8 +9,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
+import 'package:instagram_ui_clone/presentation/utils/widget_utils.dart';
 import '../../../authentication/authentication_service.dart';
 import '../../../profile/profile.dart';
+import "package:image_cropper/image_cropper.dart";
 
 part 'edit_profile_page_event.dart';
 part 'edit_profile_page_state.dart';
@@ -24,20 +26,20 @@ class EditProfilePageBloc extends Bloc<EditProfilePageEvent, EditProfilePageStat
     if(event is WidgetLoadedEvent)
       yield* onWidgetLoadedEvent(event);
     
-    if(event is ClickedCheckmarkButtonEvent)
-      yield* onClickedCheckmarkButtonEvent(event);
-
-    else if(event is ChangedUsernameEvent)
-      yield* onChangedUsernameEvent(event);
-
-    else if(event is ChangedBioEvent)
-      yield* onChangedBioEvent(event);
+    else if(event is FormChangedEvent)
+      yield* onFormChangedEvent(event);
+    
+    else if(event is ClickedCheckmarkButtonEvent)
+      yield* onClickedCheckmarkButtonEvent(event);  
 
     else if(event is ClickedChangeDPEvent)
       yield* onClickedChangeDPButtonEvent(event);
 
     else if(event is ChangedDPEvent)
       yield* onChangedDPEvent(event);
+
+    else if(event is ClickedChangePasswordEvent)
+      yield* onClickedChangePasswordEvent(event);
   }
 
   Stream<EditProfilePageState> onWidgetLoadedEvent(WidgetLoadedEvent event) async* {
@@ -45,7 +47,16 @@ class EditProfilePageBloc extends Bloc<EditProfilePageEvent, EditProfilePageStat
     
     final ProfileDTO profile = (await _profileService.getProfile(user.uid))!;
 
-    yield new InputState(new TextWithError(profile.username, ""), profile.bio, "", profile.dpURL, "");
+    usernameController.text = profile.username;
+    bioController.text = profile.bio;    
+
+    yield new InputState(true, "", profile.dpURL, "");
+  }
+
+  Stream<EditProfilePageState> onFormChangedEvent(final FormChangedEvent event) async* {
+    final InputState inputState = state as InputState;
+    
+    yield inputState.copyWith(checkmarkEnabled: formKey.currentState!.validate());
   }
 
   Stream<EditProfilePageState> onClickedCheckmarkButtonEvent(ClickedCheckmarkButtonEvent event) async* {
@@ -53,20 +64,21 @@ class EditProfilePageBloc extends Bloc<EditProfilePageEvent, EditProfilePageStat
 
     yield const LoadingState();
 
-    final User currentUser = (await _authenticationService.getCurrentUser())!;
-    print("CustomLog: uid = ${currentUser.uid}");
+    final User currentUser = (await _authenticationService.getCurrentUser())!;    
     final SetProfileDTO profile = new SetProfileDTO(
-      currentUser.uid, inputState.username.text, inputState.bio,
-      dpURL: inputState.dpPath.isEmpty ? inputState.dpURL : null, 
-      dpPath: inputState.dpPath.isNotEmpty ? inputState.dpPath : null
+      currentUser.uid, usernameController.text, bioController.text,
+      dpURL: (inputState.dpPath.isEmpty) ? inputState.dpURL : null, 
+      dpPath: (inputState.dpPath.isNotEmpty) ? inputState.dpPath : null
     );
     
     try {
-      await _profileService.setProfile(profile);
+      await _profileService.setProfile(profile);      
       
+      showSnackBarWithText(event.context, "Profile updated");
       Navigator.pop(event.context);
     }
     on UsernameAlreadyExistsError {
+      showSnackBarWithText(event.context, "Username already exists");
       yield inputState.copyWith(error: "Username already exists");
     }
 
@@ -95,33 +107,26 @@ class EditProfilePageBloc extends Bloc<EditProfilePageEvent, EditProfilePageStat
     await showModalBottomSheet(context: event.context, builder: buildModalSheet);
   }
 
+  Stream<EditProfilePageState> onClickedChangePasswordEvent(final ClickedChangePasswordEvent event) async* {    
+    await Navigator.pushReplacementNamed(event.pageContext, "Change Password Page");
+  }
+
   Future<void> _pickThumbnailFromImagePicker(ImageSource source) async {
     final ImagePicker imagePicker = new ImagePicker();
 
-    final XFile? pickedImageXFile = await imagePicker.pickImage(source: source);
+    final XFile? pickedImageXFile = await imagePicker.pickImage(source: source, );
     if(pickedImageXFile == null)
       return;
 
-    add(new ChangedDPEvent(pickedImageXFile.path));
-  }
-
-  Stream<EditProfilePageState> onChangedUsernameEvent(final ChangedUsernameEvent event) async* {
-    final InputState inputState = state as InputState;
-
-    final String error;
-    if(event.value.isEmpty || _profileService.isValidUsername(event.value))
-      error = "";
+    final File? croppedImageFile = await ImageCropper.cropImage(sourcePath: pickedImageXFile.path);
+    final String imagePath;
+    if(croppedImageFile == null)
+      imagePath = pickedImageXFile.path;
     else
-      error = "Pls input valid username";
-    
-    yield inputState.copyWith(username: new TextWithError(event.value, error));
+      imagePath = croppedImageFile.path;
+ 
+    add(new ChangedDPEvent(imagePath));
   }
-
-  Stream<EditProfilePageState> onChangedBioEvent(final ChangedBioEvent event) async* {
-    final InputState inputState = state as InputState;    
-    
-    yield inputState.copyWith(bio: event.value);
-  }  
 
   Stream<EditProfilePageState> onChangedDPEvent(final ChangedDPEvent event) async* {
     print("Changed DP");
@@ -129,9 +134,19 @@ class EditProfilePageBloc extends Bloc<EditProfilePageEvent, EditProfilePageStat
     final InputState previousInputState = state as InputState;
 
     yield previousInputState.copyWith(dpPath: event.path);
+  }  
+
+  bool usernameValidator(final String value) {
+    return _authenticationService.isValidUsername(value);
   }
 
 
   final AuthenticationService _authenticationService;
   final ProfileService _profileService;
+
+  final TextEditingController usernameController = new TextEditingController();
+  final TextEditingController passwordController = new TextEditingController();  
+  final TextEditingController bioController = new TextEditingController();
+
+  final GlobalKey<FormState> formKey = new GlobalKey<FormState>();
 }

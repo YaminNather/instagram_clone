@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:injectable/injectable.dart';
+import 'package:instagram_ui_clone/presentation/utils/widget_utils.dart';
 import '../../../authentication/authentication_service.dart';
 
 part 'sign_up_page_event.dart';
@@ -100,7 +102,7 @@ class SignUpPageBloc extends Bloc<SignUpPageEvent, SignUpPageState> {
     }    
   }
 
-  Stream<SignUpPageState> onClickedSignUpButtonEvent(ClickedSignUpButtonEvent event) async* {
+  Stream<SignUpPageState> onClickedSignUpButtonEvent(ClickedSignUpButtonEvent event) async* {  
     final InputState previousState = state as InputState;
 
     yield const LoadingState();
@@ -108,12 +110,15 @@ class SignUpPageBloc extends Bloc<SignUpPageEvent, SignUpPageState> {
     try {      
       await _authenticationService.signUpWithEmailAndPassword(
         previousState.username.text, previousState.emailAddress.text, previousState.password.text
-      );      
+      );
+
+      showSnackBarWithText(event.context, "Signed up");
 
       Navigator.pushNamedAndRemoveUntil(event.context, "Signed In Page", (_) => false);
     }
     catch(e) {
       print(e);
+      showSnackBarWithText(event.context, "Couldnt Sign up");
 
       yield previousState.copyWith();
     }

@@ -27,12 +27,19 @@ class HomePageBloc extends Bloc<HomePageEvent, HomePageState> {
     final Stream<List<PostDTO>> postsStream = _postService.getStreamForUsersFeed(await _getCurrentUsersId());
 
     postsStream.listen(
-      (postsList) => add( NewPostsAvailableEvent(new Posts(postsList)) )
+      (postsList) {
+        print("CustomLog: Posts recieved from stream");
+        add( NewPostsAvailableEvent(new Posts(postsList)) );
+      }
     );
   }
 
   Stream<HomePageState> _onNewPostsAvailableEvent(final NewPostsAvailableEvent event) async* {
-    yield LoadedState(event.posts);
+    print("CustomLog: Updating state");
+
+    final HomePageState previousState = state;
+
+    yield new LoadedState(event.posts);
   }
 
   Future<String> _getCurrentUsersId() async {

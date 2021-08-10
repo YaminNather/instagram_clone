@@ -24,3 +24,24 @@ class ClickedSignOutButtonEvent extends ProfilePageEvent {
 
   final BuildContext pageContext;
 }
+
+class ProfileChangedEvent extends ProfilePageEvent {
+  const ProfileChangedEvent(this.profile);
+
+
+  final ProfileDTO profile;
+}
+
+class FollowingChangedEvent extends ProfilePageEvent {
+  const FollowingChangedEvent(this.followingCount);
+
+
+  final int followingCount;
+}
+
+class FollowersChangedEvent extends ProfilePageEvent {
+  const FollowersChangedEvent(this.followersCount);
+
+
+  final int followersCount;
+}

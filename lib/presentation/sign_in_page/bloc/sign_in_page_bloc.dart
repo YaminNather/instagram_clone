@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:injectable/injectable.dart';
 import 'package:instagram_ui_clone/authentication/authentication_service.dart';
+import 'package:instagram_ui_clone/presentation/utils/widget_utils.dart';
 import 'package:meta/meta.dart';
 
 part 'sign_in_page_event.dart';
@@ -75,7 +77,7 @@ class SignInPageBloc extends Bloc<SignInPageEvent, SignInPageState> {
   }
 
   Stream<SignInPageState> onClickedSignInButtonEvent(ClickedSignInButtonEvent event) async* {
-    OnClickedSignedInButtonEvent onClickedEvent = OnClickedSignedInButtonEvent(this, event);
+    OnClickedSignedInButtonEvent onClickedEvent = new OnClickedSignedInButtonEvent(this, event);
 
     yield* onClickedEvent.execute();
   }

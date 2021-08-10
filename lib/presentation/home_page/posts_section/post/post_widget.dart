@@ -1,10 +1,13 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
-import 'package:instagram_ui_clone/post/post.dart';
-import 'package:instagram_ui_clone/presentation/home_page/posts_section/post/video_player/video_player_widget.dart';
-import 'package:video_player/video_player.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:instagram_ui_clone/post/likes.dart';
+import '../../../../injector.dart';
+import '../../../../post/post.dart';
+import 'video_player/video_player_widget.dart';
 import '../../../../post/post_dto.dart';
 import '../../../widgets/icon_toggle_button_widget.dart';
+import 'bloc/post_bloc.dart';
 
 
 
@@ -18,60 +21,45 @@ class WPost extends StatefulWidget {
   final PostDTO post;
 }
 
-class _WPostState extends State<WPost> {
-  @override
-  void initState() {
-    super.initState();
-
-    if(widget.post.mediaType == const VideoMediaType())
-      _initializeVideo();
-  }
-
-  Future<void> _initializeVideo() async {
-    final VideoPlayerController videoPlayerController = new VideoPlayerController.network(widget.post.imageURI);
-    _videoPlayerController = videoPlayerController;
-
-    await videoPlayerController.initialize();
-
-    if(mounted)
-      setState(() {});
-  }
-
+class _WPostState extends State<WPost> {  
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _buildUpperSection(),
-
-        _buildMedia(),
-
-        _buildActionButtons(),        
-
-        Padding(
-          padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 2.0, bottom: 16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              _buildCaption(),
-
-              const SizedBox(height: 4.0),
-            
-              _buildLikes(),
-
-              const SizedBox(height: 4.0),
-
-              _buildReply(),
-
-              const SizedBox(height: 4.0),
-
-              _buildTimeSincePost()
-            ]
+    return BlocProvider<PostBloc>(
+      create: (context) => _bloc..add(new WidgetLoadedEvent(widget.post)),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          _buildUpperSection(),
+  
+          _buildMedia(),
+  
+          _buildActionButtons(),        
+  
+          Padding(
+            padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 2.0, bottom: 16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                _buildCaption(),
+  
+                const SizedBox(height: 4.0),
+              
+                _buildLikes(),
+  
+                const SizedBox(height: 4.0),
+  
+                _buildReply(),
+  
+                const SizedBox(height: 4.0),
+  
+                _buildTimeSincePost()
+              ]
+            )
           )
-        )
-      ]
+        ]
+      )
     );
   }
 
@@ -114,29 +102,17 @@ class _WPostState extends State<WPost> {
     final Widget media;
     if(widget.post.mediaType == const ImageMediaType())    
       media = Image.network(widget.post.imageURI, fit: BoxFit.cover);
-    else {
+    else
       media = WVideoPlayer(url: widget.post.imageURI);
-    }
 
     return SizedBox(height: 300.0, child: media);
   }
 
   Widget _buildActionButtons() {
-    void likeButtonOnChangedCallback(bool value) {
-      final Text content = Text(value ? "Liked post" : "Remove like from post");
-      final SnackBar snackBar = SnackBar(content: content, duration: const Duration(seconds: 1));
-      
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }
-
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        WIconToggleButton(          
-          enabledIcon: const Icon(EvaIcons.heart, color: Colors.red), 
-          disabledIcon: const Icon(EvaIcons.heartOutline),
-          onChanged: likeButtonOnChangedCallback
-        ),
+        _buildLikeButton(),
 
         IconButton(icon: const Icon(EvaIcons.messageCircleOutline), onPressed: () {}),
 
@@ -145,15 +121,42 @@ class _WPostState extends State<WPost> {
     );
   }
 
+  Widget _buildLikeButton() {
+    void onChangedCallback(bool value) {
+      _bloc.add(new ClickedLikeButtonEvent(context, widget.post));
+    }
+
+    return BlocBuilder<PostBloc, PostState>(
+      builder: (context, state) {
+        // if(state.tryingToLike)
+        //   return const CircularProgressIndicator.adaptive();
+
+        return WIconToggleButton(
+          enabledIcon: const Icon(EvaIcons.heart, color: Colors.red), 
+          disabledIcon: const Icon(EvaIcons.heartOutline),
+          onChanged: (!state.tryingToLike) ? onChangedCallback : null,
+          value: _bloc.state.liked
+        );
+      }
+    );
+  }
+
   Widget _buildLikes() {
+    final Likes likes = widget.post.likes;
+    final String message;
+    if(likes.length == 0)
+      message = "No likes";
+    else 
+      message = "Liked by ${likes.length}";
+
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: const <Widget>[
+      children: <Widget>[
         const CircleAvatar(radius: 8.0),
 
         const SizedBox(width: 4.0),
 
-        const Text("Liked by LikedUser and 20 others"),
+        Text(message)
       ]
     );
   }
@@ -161,23 +164,12 @@ class _WPostState extends State<WPost> {
   Widget _buildReply() => const Text("ReplyingUser The reply");
 
   Widget _buildTimeSincePost() {
-    return Text(
-      timeSincePostAsString(widget.post.dateTime), 
-      style: const TextStyle(color: Colors.grey)
-    );
-  }
-
-  @override
-  void dispose() {
-    final VideoPlayerController? videoPlayerController = _videoPlayerController;
-    if(videoPlayerController != null)
-      videoPlayerController.dispose();
-
-    super.dispose();
+    return Text(timeSincePostAsString(widget.post.dateTime), style: const TextStyle(color: Colors.grey));
   }
 
   
-  VideoPlayerController? _videoPlayerController;
+
+  final PostBloc _bloc = new PostBloc();
 }
 
 

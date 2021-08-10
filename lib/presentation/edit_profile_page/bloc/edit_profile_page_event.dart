@@ -7,22 +7,12 @@ abstract class EditProfilePageEvent extends Equatable {
   List<Object> get props => [];
 }
 
-abstract class TextFieldChangedEvent extends EditProfilePageEvent {
-  const TextFieldChangedEvent(this.value);
-
-  final String value;
-}
-
 class WidgetLoadedEvent extends EditProfilePageEvent {
   const WidgetLoadedEvent();
 }
 
-class ChangedUsernameEvent extends TextFieldChangedEvent {
-  const ChangedUsernameEvent(String value) : super(value);
-}
-
-class ChangedBioEvent extends TextFieldChangedEvent {
-  const ChangedBioEvent(String value) : super(value);
+class FormChangedEvent extends EditProfilePageEvent{
+  const FormChangedEvent();
 }
 
 class ChangedDPEvent extends EditProfilePageEvent {
@@ -43,4 +33,10 @@ class ClickedCheckmarkButtonEvent extends EditProfilePageEvent {
 
 
   final BuildContext context;
+}
+
+class ClickedChangePasswordEvent extends EditProfilePageEvent {
+  const ClickedChangePasswordEvent(this.pageContext);
+
+  final BuildContext pageContext;
 }

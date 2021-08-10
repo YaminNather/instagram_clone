@@ -1,7 +1,6 @@
 import 'dart:math';
 import 'dart:ui';
 
-import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_ui_clone/presentation/home_page/posts_section/post/video_player/state_indicator_icon_widget.dart';
 import 'package:video_player/video_player.dart';
@@ -23,7 +22,12 @@ class _WVideoPlayerState extends State<WVideoPlayer> {
     
     _videoPlayerController = new VideoPlayerController.network(widget.url);
 
-    _videoPlayerController.initialize().then((_) => setState(() {}));
+    _videoPlayerController.initialize().then(
+      (_) {
+        if(mounted)
+          setState(() {});
+      }
+    );
   }
 
   @override

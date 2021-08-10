@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
 
-@singleton
+@lazySingleton
 class UsernameSpecification {
   bool isValid(final String username) {
     return username.length >= 5;

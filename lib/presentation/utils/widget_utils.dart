@@ -6,3 +6,7 @@ double getScaffoldBodyHeight(final BuildContext context) {
 
   return screenHeight - appBarHeight;
 }
+
+void showSnackBarWithText(final BuildContext context, final String text) {
+  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+}

@@ -8,7 +8,7 @@ import '../../injector.dart';
 import 'bloc/edit_profile_page_bloc.dart';
 
 class WEditProfilePage extends StatefulWidget {
-  WEditProfilePage({ Key? key }) : super(key: key);
+  const WEditProfilePage({ Key? key }) : super(key: key);
 
   @override
   _WEditProfilePageState createState() => new _WEditProfilePageState(); 
@@ -28,19 +28,20 @@ class _WEditProfilePageState extends State<WEditProfilePage> {
   AppBar _buildAppBar() {
     return AppBar(
       title: const Text("Edit Profile"), 
-      actions: <Widget>[
-        _buildCheckmarkButton()
-      ]
+      actions: <Widget>[ _buildCheckmarkButton() ]
     );
   }
 
   Widget _buildCheckmarkButton() {
     return BlocBuilder<EditProfilePageBloc, EditProfilePageState>(
       builder: (context, state) {
+        final bool active;
         if(state is LoadingState)
-          return const Center(child: const CircularProgressIndicator.adaptive());
-
-        final InputState inputState = state as InputState;
+          active = false;
+        else if(state is InputState)
+          active = state.checkmarkEnabled;
+        else
+          active = false;
         
         void onPressedCallback() {
           bloc.add(ClickedCheckmarkButtonEvent(context));
@@ -48,7 +49,7 @@ class _WEditProfilePageState extends State<WEditProfilePage> {
 
         return IconButton(
           icon: const Icon(EvaIcons.checkmarkOutline), 
-          onPressed: inputState.username.error.isEmpty ?  onPressedCallback : null
+          onPressed: (active) ? onPressedCallback : null
         );
       }
     );
@@ -71,19 +72,25 @@ class _WEditProfilePageState extends State<WEditProfilePage> {
     
                 const SizedBox(height: 32.0),
     
-                Wrap(
-                  runSpacing: 8.0,
-                  children: [
-                    _buildUsernameField(),
-                    
-                    _buildBioField()
-                  ],
-                )
+                Form(
+                  key: bloc.formKey,
+                  onChanged: () => bloc.add(const FormChangedEvent()),
+                  child: Wrap(
+                    runSpacing: 8.0,
+                    children: <Widget>[
+                      _buildUsernameField(),
+                      
+                      _buildBioField(),
+
+                      _buildChangePasswordButton()                     
+                    ]
+                  )
+                )                
               ]
-            ),
+            )
           )
         );
-      },
+      }
     );
   }
 
@@ -112,45 +119,37 @@ class _WEditProfilePageState extends State<WEditProfilePage> {
   }
 
   Widget _buildUsernameField() {
-    final InputState inputState = bloc.state as InputState;
-
-    void onChangedCallback(String text) {
-      bloc.add(ChangedUsernameEvent(text));
-    }
-
     String? validatorCallback(String? text) {
-      return inputState.username.error.isEmpty ? null : inputState.username.error;
+      return bloc.usernameValidator(text!) ? null : "Enter valid username";
     }
 
     return _buildTextFormField(
-      label: "Username", initialValue: inputState.username.text, onChanged: onChangedCallback, 
-      validator: validatorCallback
+      controller: bloc.usernameController, label: "Username", validator: validatorCallback
     );
   }
 
   Widget _buildBioField() {
-    void onChangedCallback(String text) {
-      bloc.add(ChangedBioEvent(text));
-    }
+    return _buildTextFormField(controller: bloc.bioController, label: "Bio", maxLines: null);
+  }
 
-    final InputState inputState = bloc.state as InputState;
-
-    return _buildTextFormField(
-      label: "Bio", initialValue: inputState.bio, onChanged: onChangedCallback, maxLines: null
+  Widget _buildChangePasswordButton() {
+    return TextButton(
+      child: const Text("Change Password"), onPressed: () => bloc.add(new ClickedChangePasswordEvent(context))
     );
   }
 
   Widget _buildTextFormField({
-    String? label, String? initialValue, void Function(String)? onChanged, 
-    String? Function(String?)? validator, int? maxLines = 1
+    TextEditingController? controller, String? label, String? initialValue, 
+    void Function(String)? onChanged, String? Function(String?)? validator, int? maxLines = 1
   }) {
     InputDecoration deocoration = new InputDecoration(labelText: label);
 
     return TextFormField(
-      decoration: deocoration, initialValue: initialValue, onChanged: onChanged, validator: validator,
-      maxLines: maxLines
+      controller: controller, decoration: deocoration, initialValue: initialValue, onChanged: onChanged, 
+      validator: validator, maxLines: maxLines
     );
   }  
+
 
 
   final EditProfilePageBloc bloc = getIt<EditProfilePageBloc>();

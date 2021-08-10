@@ -1,11 +1,12 @@
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:instagram_ui_clone/presentation/search_page/search_page_widget.dart';
 import '../add_post_page/add_post_page_widget.dart';
 import '../home_page/home_page_widget.dart';
 import '../profile_page/profile_page_widget.dart';
-import '../search_page/search_page_widget.dart';
 import '../timeline_page/timeline_page_widget.dart';
+import 'dp_icon_widget.dart';
 
 class WSignedInPage extends StatefulWidget {
   const WSignedInPage({ Key? key }) : super(key: key);
@@ -28,15 +29,15 @@ class _WSignedInPageState extends State<WSignedInPage> {
       0 : const WHomePage(),
       1 : const WSearchPage(),
       2 : const WAddPostPage(),
-      3: const WTimelinePage(),
+      3 : const WTimelinePage(),
       4 : const WProfilePage()
     };
 
     return tabMap[currentTab] ?? tabMap[0]!;
   }
 
-  BottomNavigationBar _buildBottomNavigationBar() {  
-    return BottomNavigationBar(
+  BottomNavigationBar _buildBottomNavigationBar() {
+    return BottomNavigationBar(      
       iconSize: 28.0,      
       items: <BottomNavigationBarItem>[
         const BottomNavigationBarItem(
@@ -62,16 +63,13 @@ class _WSignedInPageState extends State<WSignedInPage> {
               border: new Border.all(width: 1.0), borderRadius: new BorderRadius.circular(1000.0)
             ),
             padding: const EdgeInsets.all(1.0),
-            child: const CircleAvatar(
-              maxRadius: 12.0, 
-              foregroundImage: NetworkImage("https://images.unsplash.com/photo-1604004215402-e0be233f39be")
-            ),
+            child: const WDPIcon()
           ), 
           label : ""
         ),
       ],
       currentIndex: currentTab,
-      onTap: (index) => _changeTab(index)
+      onTap: _changeTab
     );
   }
 

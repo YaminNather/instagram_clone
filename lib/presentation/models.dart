@@ -28,11 +28,11 @@ class Post {
 const List<User> users = const <User>[
   const User("joshua_l", "https://randomuser.me/api/portraits/men/86.jpg"), 
   const User("craig_love", "https://randomuser.me/api/portraits/men/91.jpg"), 
-  const User("xxxKillmongerxxx", "https://randomuser.me/api/portraits/men/41.jpg"),
-  const User("virgin_warlord", "https://randomuser.me/api/portraits/women/29.jpg"), 
-  const User("kewl_kid_96", "https://randomuser.me/api/portraits/women/77.jpg"),
-  const User("6969lucifer", "https://randomuser.me/api/portraits/women/69.jpg"),
-  const User("crazy_chikk20187", "https://randomuser.me/api/portraits/women/79.jpg"),
+  const User("Sam_79", "https://randomuser.me/api/portraits/men/41.jpg"),
+  const User("__Maveline__", "https://randomuser.me/api/portraits/women/29.jpg"), 
+  const User("sunny9", "https://randomuser.me/api/portraits/women/77.jpg"),
+  const User("youareme_x", "https://randomuser.me/api/portraits/women/69.jpg"),
+  const User("world_blender", "https://randomuser.me/api/portraits/women/79.jpg"),
   const User("dumb_guy12", "https://randomuser.me/api/portraits/men/48.jpg"),
   const User("im_a_rainbox9847", "https://randomuser.me/api/portraits/women/19.jpg")
 

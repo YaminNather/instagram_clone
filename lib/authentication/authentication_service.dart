@@ -36,6 +36,9 @@ class AuthenticationService {
   }
 
   bool isValidUsername(final String username) {
+    if(username.contains(new RegExp(r"[^A-Za-z0-9_]")))
+      return false;
+
     return _profileService.isValidUsername(username);
   }
 
@@ -95,6 +98,13 @@ class AuthenticationService {
       throw new UserIdDoesntExistException();
 
     return await documentSnapshot.get("username");
+  }
+
+  Future<void> updateCurrentUsersPassword(final String oldPassword, final String newPassword) async {
+    final User user = (await getCurrentUser())!;
+
+    await auth().signInWithEmailAndPassword(email: user.email!, password: oldPassword);
+    await user.updatePassword(newPassword);
   }
 
   CollectionReference getUserCollection() => firestore().collection(userCollection);

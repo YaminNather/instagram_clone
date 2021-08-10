@@ -2,7 +2,7 @@ import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../injector.dart';
-import '../global_provider.dart';
+import '../widgets/instagram_logo_widget.dart';
 import '../models.dart';
 import '../widgets/gradient_ring_widget.dart';
 import 'bloc/home_page_bloc.dart';
@@ -26,15 +26,14 @@ class _WHomePageState extends State<WHomePage> {
     );
   }
 
-  AppBar _buildAppBar() {
-    final String logoURL = GlobalProvider.of(context).logoURLSmall;
-
+  AppBar _buildAppBar() {  
     return AppBar(
       leading: IconButton(icon: const Icon(EvaIcons.cameraOutline), onPressed: () {}), 
-      title: SizedBox(
+      title: const SizedBox(
         width: double.infinity,
         child: FractionallySizedBox(
-          widthFactor: 0.5, alignment: Alignment.center, child: Image.network(logoURL)
+          widthFactor: 0.5, alignment: Alignment.center, 
+          child: WInstagramLogo()
         )
       ),
       actions: <Widget>[

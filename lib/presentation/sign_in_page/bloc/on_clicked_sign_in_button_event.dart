@@ -14,10 +14,13 @@ class OnClickedSignedInButtonEvent {
       else
         await _signInWithUsername(previousState.emailAddress, previousState.password);
 
+      showSnackBarWithText(event.context, "Signed in.");
+
       Navigator.pushNamedAndRemoveUntil(event.context, "Signed In Page", (_) => false);
     }
     catch(e) {
       print(e);
+      showSnackBarWithText(event.context, "Couldnt Sign in.");
 
       yield previousState.copyWith();
     }

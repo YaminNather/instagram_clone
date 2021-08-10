@@ -23,17 +23,23 @@ class _WDMPageState extends State<WDMPage> {
   }
 
   Widget _buildBody() {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const WSearchBar(),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        // mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Expanded(
+            child: ListView(
+              children: <Widget>[
+                const WSearchBar(),
 
-            for(int i = 0; i < latestReplies.length; i++) _buildListItem(latestReplies[i])
-          ]
-        ),
+                for(int i = 0; i < latestReplies.length; i++) _buildListItem(latestReplies[i])
+              ]
+            )
+          ),
+
+          _buildFooter()
+        ]
       ),
     );
   }
@@ -45,7 +51,7 @@ class _WDMPageState extends State<WDMPage> {
     if(timeSinceInSeconds < 60)
       timeSince = "now";
     else
-      timeSince = "${timeSinceInSeconds ~/ 60} m";
+      timeSince = "${timeSinceInSeconds ~/ 60}m";
 
     return new ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -57,10 +63,19 @@ class _WDMPageState extends State<WDMPage> {
 
           const SizedBox(width: 8.0),
 
-          Text(timeSince)
+          Text(".$timeSince")
         ],
       ),
-      // trailing: const Icon(EvaIcons.cameraOutline)
+      trailing: const Icon(EvaIcons.cameraOutline)
+    );
+  }
+
+  Widget _buildFooter() {
+    return SizedBox(
+      width: double.infinity, 
+      child: TextButton.icon(
+        icon: const Icon(EvaIcons.cameraOutline), label: const Text("Camera"), onPressed: () {}
+      )
     );
   }
 }

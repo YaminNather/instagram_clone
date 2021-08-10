@@ -38,7 +38,7 @@ class Posts extends Equatable {
   PostDTO operator[](index) => posts[index];  
 
   @override  
-  List<Object?> get props => [...posts];
+  List<Object?> get props => posts;
 
 
 

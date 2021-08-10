@@ -14,7 +14,7 @@ class Username extends ValueObject<Username>{
   final String value;
 }
 
-@singleton
+@lazySingleton
 class UsernameFactory {
   const UsernameFactory(this.specification);
 

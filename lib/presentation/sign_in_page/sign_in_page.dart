@@ -3,11 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:instagram_ui_clone/injector.dart';
 import 'package:instagram_ui_clone/presentation/sign_in_page/bloc/sign_in_page_bloc.dart';
 import 'package:provider/provider.dart';
-import '../global_provider.dart';
+import '../widgets/instagram_logo_widget.dart';
 import '../utils/widget_utils.dart';
 import '../widgets/url_widget.dart';
-
-import "../auth_widgets/auth_styles.dart" as styles;
 
 class WSignInPage extends StatefulWidget {
   const WSignInPage({ Key? key }) : super(key: key);
@@ -52,7 +50,7 @@ class _WSignInPageState extends State<WSignInPage> {
                     
                     new _WForm(),
     
-                    const SizedBox(height: 64.0),
+                    const SizedBox(height: 32.0),
     
                     _buildOrDivider(),
     
@@ -74,10 +72,9 @@ class _WSignInPageState extends State<WSignInPage> {
   }
 
   Widget _buildLogo(final BuildContext context) {
-    final String url = GlobalProvider.of(context).logoURLBig;
-    
-    return Padding( 
-      padding: const EdgeInsets.symmetric(horizontal: 64.0), child: Image.network(url, fit: BoxFit.contain) 
+    return const Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 64.0), 
+      child: WInstagramLogo()
     );
   }
 
@@ -101,10 +98,10 @@ class _WSignInPageState extends State<WSignInPage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        const Text("Have an account?"),
+        const Text("Don't have an account?"),
 
         TextButton(
-          child: const Text(" Log in."), 
+          child: const Text(" Sign up."), 
           onPressed: () => Navigator.popAndPushNamed(context, "Sign Up Page")
         )
       ]
@@ -205,8 +202,7 @@ class _WForm extends StatelessWidget {
     return SizedBox(      
       width: double.infinity, height: 50.0,
       child: ElevatedButton(
-        child: const Text("Sign in"), style: styles.getElevatedButtonStyle(), 
-        onPressed: (isButtonEnabled) ? onPressedCallback : null
+        child: const Text("Sign in"), onPressed: (isButtonEnabled) ? onPressedCallback : null
       )
     );
   }

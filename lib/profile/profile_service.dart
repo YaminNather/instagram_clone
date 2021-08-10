@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:built_collection/built_collection.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:injectable/injectable.dart';
@@ -59,7 +60,7 @@ class ProfileService {
     final ProfileDAO profileDAO = new ProfileDAO(userId);
     await profileDAO.readFromDatabase();
 
-    return _mapProfileDTOToDAO(profileDAO);
+    return _mapProfileDAOToDTO(profileDAO);
   }
 
   Future<ProfileDTO?> getProfileWithUsername(final String username) async {
@@ -78,10 +79,30 @@ class ProfileService {
     final ProfileDAO profileDAO = ProfileDAO(userId);
     await profileDAO.readFromDatabase();
 
-    return _mapProfileDTOToDAO(profileDAO);
+    return _mapProfileDAOToDTO(profileDAO);
   }
 
-  ProfileDTO _mapProfileDTOToDAO(final ProfileDAO profileDAO) {
+  Stream<ProfileDTO> getProfileStream(final String userId) {
+    return getProfileCollection().doc(userId).snapshots().map(_mapDocumentSnapshotToDTO);
+  }
+
+  Future<BuiltList<ProfileDTO>> getSearchResults(final String userId, final String searchText) async {
+    final QuerySnapshot querySnapshot = await getProfileCollection()    
+    .where("username", isGreaterThanOrEqualTo: searchText)
+    .get();
+    
+    final List<ProfileDTO> users = querySnapshot.docs.map((e) => _mapDocumentSnapshotToDTO(e)).toList();
+
+    users.removeWhere((e) => e.userId == userId);
+
+    return users.toBuiltList();
+  }
+
+  ProfileDTO _mapDocumentSnapshotToDTO(final DocumentSnapshot snapshot) {
+    return ProfileDTO(snapshot.id, snapshot.get("username"), snapshot.get("bio"), snapshot.get("dp_url"));
+  }
+
+  ProfileDTO _mapProfileDAOToDTO(final ProfileDAO profileDAO) {
     return new ProfileDTO(
       profileDAO.getUserId(), profileDAO.getUsername(), profileDAO.getBio(), profileDAO.getDpURL()
     );
@@ -90,6 +111,7 @@ class ProfileService {
   CollectionReference getProfileCollection() => _firestore().collection(_profileCollection);
 
   FirebaseFirestore _firestore() => FirebaseFirestore.instance;
+
 
 
   static const String _profileCollection = "profile";

@@ -35,7 +35,7 @@ class _WProfilePageState extends State<WProfilePage> {
 
     return AppBar(
       centerTitle: true, automaticallyImplyLeading: false, 
-      title: new WChangeAccount(locked: true, name: loadedState.username),
+      title: new WChangeAccount(locked: true, name: loadedState.profile.username),
       actions: <Widget>[
         IconButton(
           icon: const Icon(EvaIcons.personRemoveOutline), 
@@ -74,7 +74,7 @@ class _WProfilePageState extends State<WProfilePage> {
 
               const SizedBox(height: 16.0),
 
-              _buildEditProfileButton(),
+              _buildEditProfileButton()              
             ]
           )
         ),
@@ -100,32 +100,22 @@ class _WProfilePageState extends State<WProfilePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: <Widget>[
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text(loadedState.posts.length.toString(), style: Theme.of(context).textTheme.headline6),
+        _buildStat("Posts", loadedState.posts.length),
 
-            const Text("Posts")
-          ]
-        ),
+        _buildStat("Followers", loadedState.followersCount),
 
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text("834", style: Theme.of(context).textTheme.headline6),
+        _buildStat("Following", loadedState.followingCount)
+      ]
+    );
+  }
 
-            const Text("Followers")
-          ]
-        ),
+  Widget _buildStat(final String statName, final int value) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(value.toString(), style: Theme.of(context).textTheme.headline6),
 
-        Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text("162", style: Theme.of(context).textTheme.headline6),
-
-            const Text("Following")
-          ]
-        )
+        Text(statName)
       ]
     );
   }
@@ -137,9 +127,9 @@ class _WProfilePageState extends State<WProfilePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        new Text(loadedState.username),
+        new Text(loadedState.profile.username),
 
-        new Text(loadedState.bio)
+        new Text(loadedState.profile.bio)
       ]
     );
   }
@@ -150,13 +140,10 @@ class _WProfilePageState extends State<WProfilePage> {
     return Container(
       decoration: new BoxDecoration(
         border: new Border.all(color: Colors.grey, width: 2.0),
-        borderRadius: new BorderRadius.circular(1000.0),
+        borderRadius: new BorderRadius.circular(1000.0)
       ),
       padding: const EdgeInsets.all(4.0), 
-      child: CircleAvatar(
-        maxRadius: 40.0, 
-        foregroundImage: NetworkImage(loadedState.dpURL)
-      )
+      child: CircleAvatar(maxRadius: 40.0, foregroundImage: NetworkImage(loadedState.profile.dpURL))
     );
   }
 
@@ -183,20 +170,15 @@ class _WProfilePageState extends State<WProfilePage> {
       return Image.network(post.uri, fit: BoxFit.cover);
   }
 
+  @override
+  void dispose() {
+    bloc.dispose();
 
-  final ProfilePageBloc bloc = getIt<ProfilePageBloc>(); 
+    super.dispose();
+  }
 
-  // static const List<String> postURLs = const <String>[
-  //   "https://expertphotography.com/wp-content/uploads/2020/07/candid-photography-3.jpg",
-  //   "https://i.pinimg.com/564x/89/42/9f/89429fd25f6f7d18ad8f25516fd370f8.jpg",
-  //   "https://3.imimg.com/data3/BM/AY/MY-14891732/friends-photography-500x500.png",
-  //   "https://i.pinimg.com/564x/92/97/ff/9297ff54bd29634ac067ca4db4103647.jpg",
-  //   "https://i.pinimg.com/564x/47/d6/1c/47d61c147ca821f1cd274f85f770a91f.jpg",
-  //   "https://i.pinimg.com/236x/10/61/ef/1061ef96cac26d7c0c6f16b31d7cdc46.jpg",
-  //   "https://i.pinimg.com/564x/6d/d2/bf/6dd2bf62c54918650d32c640c2977997.jpg",
-  //   "https://i.pinimg.com/564x/0b/e9/67/0be9674d8d5fe067ac850901f587d323.jpg",
-  //   "https://3.imimg.com/data3/TK/QI/MY-14896318/friends-photography-500x500.jpg",
-  //   "https://i.pinimg.com/564x/f5/5c/1e/f55c1ea00ffcb51491870ae1c3621bff.jpg",
-  //   "https://i.pinimg.com/564x/94/da/eb/94daeb169fa0732cbe0a67751214de6f.jpg"
-  // ];
+
+
+
+  final ProfilePageBloc bloc = getIt<ProfilePageBloc>();
 }

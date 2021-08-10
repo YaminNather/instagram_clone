@@ -10,8 +10,12 @@ class WStoriesSection extends StatefulWidget {
 class _WStoriesSectionState extends State<WStoriesSection> {
   @override
   Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: Colors.grey)),
+      decoration: new BoxDecoration(
+        border: Border.symmetric(horizontal: BorderSide(color: theme.dividerColor))
+      ),
       padding: const EdgeInsets.symmetric(vertical: 16.0),
       child: SizedBox(
         height: 100.0,
