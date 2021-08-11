@@ -12,17 +12,15 @@ import 'follow/follow_service.dart' as _i6;
 import 'post/likes_service.dart' as _i9;
 import 'post/post.dart' as _i8;
 import 'post/post_service.dart' as _i10;
-import 'presentation/add_post_page/bloc/add_post_page_bloc.dart' as _i15;
+import 'presentation/add_post_page/bloc/add_post_page_bloc.dart' as _i14;
 import 'presentation/edit_profile_page/bloc/edit_profile_page_bloc.dart' as _i5;
 import 'presentation/home_page/bloc/home_page_bloc.dart' as _i7;
 import 'presentation/profile_page/bloc/profile_page_bloc.dart' as _i11;
 import 'presentation/sign_in_page/bloc/sign_in_page_bloc.dart' as _i12;
 import 'presentation/sign_up_page/bloc/sign_up_page_bloc.dart' as _i13;
 import 'profile/profile.dart' as _i4;
-import 'profile/profile_service.dart' as _i17;
-import 'shared_kernel/domain/model/username.dart' as _i16;
-import 'shared_kernel/domain/service/username_specification.dart'
-    as _i14; // ignore_for_file: unnecessary_lambdas
+import 'profile/profile_service.dart'
+    as _i15; // ignore_for_file: unnecessary_lambdas
 
 // ignore_for_file: lines_longer_than_80_chars
 /// initializes the registration of provided dependencies inside of [GetIt]
@@ -48,12 +46,8 @@ _i1.GetIt $initGetIt(_i1.GetIt get,
       () => _i12.SignInPageBloc(get<_i3.AuthenticationService>()));
   gh.factory<_i13.SignUpPageBloc>(
       () => _i13.SignUpPageBloc(get<_i3.AuthenticationService>()));
-  gh.lazySingleton<_i14.UsernameSpecification>(
-      () => _i14.UsernameSpecification());
-  gh.factory<_i15.AddPostPageBloc>(() => _i15.AddPostPageBloc(
+  gh.factory<_i14.AddPostPageBloc>(() => _i14.AddPostPageBloc(
       get<_i3.AuthenticationService>(), get<_i8.PostService>()));
-  gh.lazySingleton<_i16.UsernameFactory>(
-      () => _i16.UsernameFactory(get<_i14.UsernameSpecification>()));
-  gh.singleton<_i17.ProfileService>(_i17.ProfileService());
+  gh.singleton<_i15.ProfileService>(_i15.ProfileService());
   return get;
 }
